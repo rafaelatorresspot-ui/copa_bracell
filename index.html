@@ -101,7 +101,7 @@ body{background:#1a0a2e;font-family:'Barlow',sans-serif;color:white;min-height:1
 .tdot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.2);flex-shrink:0}
 
 /* ── TEAM PAGE ── */
-.tp{display:none;animation:pageFlip .35s ease-out;background:#C8C2B0}
+.tp{display:none;animation:pageFlip .35s ease-out;background:#A09880}
 .tp.active{display:block}
 @keyframes pageFlip{
   from{opacity:0;transform:perspective(1200px) rotateY(-6deg);transform-origin:left center}
@@ -163,8 +163,8 @@ body{background:#1a0a2e;font-family:'Barlow',sans-serif;color:white;min-height:1
   display:grid;grid-template-columns:1fr 1fr;
   align-items:stretch;
   position:relative;
-  background:#D8D3C4;
-  box-shadow:inset 0 0 40px rgba(0,0,0,.1);
+  background:#8C8270;
+  box-shadow:inset 0 2px 20px rgba(0,0,0,.25);
   padding:16px;
   gap:16px;
 }
@@ -187,7 +187,7 @@ body{background:#1a0a2e;font-family:'Barlow',sans-serif;color:white;min-height:1
   padding:24px 24px 40px;
   display:flex;flex-direction:column;
   border-radius:4px;
-  box-shadow:0 4px 24px rgba(0,0,0,.18),0 1px 4px rgba(0,0,0,.1);
+  box-shadow:0 6px 32px rgba(0,0,0,.3),0 2px 6px rgba(0,0,0,.15);
 }
 .panini-page.left{box-shadow:inset -16px 0 24px rgba(0,0,0,.05)}
 .panini-header{
@@ -216,9 +216,10 @@ body{background:#1a0a2e;font-family:'Barlow',sans-serif;color:white;min-height:1
 
 .panini-slot{
   position:relative;
-  aspect-ratio:3/4;
-  min-height:100px;
+  aspect-ratio:2/3;
+  min-height:110px;
   z-index:3;
+  /* Size is ALWAYS the same — inner content is position:absolute;inset:0 */
 }
 
 /* Empty slot styling */
@@ -241,8 +242,11 @@ body{background:#1a0a2e;font-family:'Barlow',sans-serif;color:white;min-height:1
   box-shadow:0 4px 14px rgba(0,0,0,.25),0 0 0 1px rgba(0,0,0,.06);
   display:flex;flex-direction:column;
   cursor:pointer;
-  position:absolute;inset:0;
+  position:absolute !important;
+  inset:0 !important;
   overflow:hidden;
+  width:auto !important;
+  height:auto !important;
   transition:transform .2s,box-shadow .2s;
 }
 .panini-slot.earned:hover .panini-slot-inner{
@@ -389,10 +393,10 @@ body{background:#1a0a2e;font-family:'Barlow',sans-serif;color:white;min-height:1
 }
 /* ── Mobile landscape / small tablet ── */
 @media(max-width:1024px){
-  .album-spread{grid-template-columns:1fr}
-  .panini-page.right{border-top:2px solid #E0E0E0}
+  .album-spread{grid-template-columns:1fr;gap:12px}
+  .panini-page.right{border-top:none}
   .album-spread::before,.album-spread::after{display:none}
-  .panini-header{height:auto;min-height:100px}
+  .panini-header{height:auto;min-height:90px}
   .panini-slots-grid{
     grid-template-columns:repeat(4,1fr);
     min-height:200px;
@@ -970,46 +974,47 @@ function blobSvg(p){
 
 // ── Build sticker slot (Panini style) ──
 function buildPaniniSlot(t, s, slotColor){
-  const e = isEarned(t.id, s.id);
-  const rc = RARITY[s.rarity]||'';
-  const p = PANINI[t.id];
+  const e   = isEarned(t.id, s.id);
+  const rc  = RARITY[s.rarity] || '';
+  const p   = PANINI[t.id];
   const codeLabel = `${t.id.slice(0,3).toUpperCase()}-${s.num}`;
 
-  if(e){
-    return`<div class="panini-slot earned ${rc}" id="psc-${t.id}-${s.id}">
-      <div class="sc-star-panini">★</div>
-      <div class="panini-slot-inner" style="position:relative">
-        <div class="sc-bar-panini" style="--slot-color:${slotColor}">
-          <span class="sc-num">${s.num}</span>
-          <span style="font-size:10px">${s.icon}</span>
-        </div>
-        <div class="sc-img-wrap-panini">
-          <img class="sc-img-panini" id="img-${t.id}-${s.id}"
-               src="${REPO}/stickers/${t.id}/${s.id}.png?t=${imgTs}" alt="${s.label}"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='flex';this.onerror=null;">
-          <div class="sc-ph-panini"><div class="sc-ph-ico-panini">${s.icon}</div></div>
-        </div>
-        <div class="sc-lbl-wrap-panini" style="border-top-color:${slotColor}">
-          <div class="sc-lbl-panini">${s.label}</div>
-        </div>
-        <div class="sc-panini-code-bot">${codeLabel}</div>
-      </div>
-    </div>`;
-  }
-
-  // Empty slot — Panini style with big watermark number
-  return`<div class="panini-slot" id="psc-${t.id}-${s.id}">
-    <div class="panini-slot-inner" style="--slot-color:${slotColor};--slot-text:${p.st};
-         background:color-mix(in srgb,${slotColor} 45%,white);border-radius:5px;
-         border:3px solid rgba(255,255,255,.6);
-         position:absolute;inset:0;overflow:hidden;display:flex;flex-direction:column;
-         align-items:center;justify-content:center;padding:4px;">
+  // ── EMPTY SLOT (not earned) ──
+  // Also used as fallback if image is missing
+  const emptyHtml = `<div class="panini-slot" id="psc-${t.id}-${s.id}">
+    <div class="panini-slot-inner" style="
+      background:color-mix(in srgb,${slotColor} 45%,white);
+      border:3px solid rgba(255,255,255,.6);border-radius:5px;
+      position:absolute;inset:0;overflow:hidden;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;padding:4px;">
       <div class="panini-slot-code" style="color:${p.st}">${codeLabel}</div>
       <div class="panini-slot-num-bg" style="color:rgba(255,255,255,.4)">${s.num}</div>
       <div style="position:absolute;bottom:6px;left:0;right:0;text-align:center;
            font-family:'Barlow Condensed',sans-serif;font-size:8px;font-weight:700;
-           letter-spacing:.5px;color:${p.st};opacity:.55;text-transform:uppercase;padding:0 4px;
-           line-height:1.3">${s.label}</div>
+           letter-spacing:.5px;color:${p.st};opacity:.55;text-transform:uppercase;
+           padding:0 4px;line-height:1.3">${s.label}</div>
+    </div>
+  </div>`;
+
+  if(!e) return emptyHtml;
+
+  // ── EARNED SLOT ──
+  // earned inner uses position:absolute;inset:0 → same size as empty slot
+  // image fills 100% via object-fit:cover
+  // if image fails to load → slot reverts to empty appearance (not broken white card)
+  return `<div class="panini-slot earned ${rc}" id="psc-${t.id}-${s.id}">
+    <div class="sc-star-panini">★</div>
+    <div class="panini-slot-inner" style="
+      position:absolute;inset:0;overflow:hidden;border-radius:5px;
+      border:3px solid white;
+      box-shadow:0 4px 14px rgba(0,0,0,.25),0 0 0 1px rgba(0,0,0,.06);
+      display:flex;flex-direction:column;cursor:pointer;
+      background:white;transition:transform .2s,box-shadow .2s;">
+      <img id="img-${t.id}-${s.id}"
+           src="${REPO}/stickers/${t.id}/${s.id}.png?t=${imgTs}"
+           alt="${s.label}"
+           style="width:100%;height:100%;object-fit:cover;display:block;flex:1;min-height:0;"
+           onerror="this.closest('.panini-slot').outerHTML=\`${emptyHtml.replace(/`/g,'\\`')}\`;this.onerror=null;">
     </div>
   </div>`;
 }
