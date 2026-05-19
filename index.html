@@ -101,7 +101,7 @@ body{background:#1a0a2e;font-family:'Barlow',sans-serif;color:white;min-height:1
 .tdot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.2);flex-shrink:0}
 
 /* ── TEAM PAGE ── */
-.tp{display:none;animation:pageFlip .35s ease-out}
+.tp{display:none;animation:pageFlip .35s ease-out;background:#C8C2B0}
 .tp.active{display:block}
 @keyframes pageFlip{
   from{opacity:0;transform:perspective(1200px) rotateY(-6deg);transform-origin:left center}
@@ -163,7 +163,10 @@ body{background:#1a0a2e;font-family:'Barlow',sans-serif;color:white;min-height:1
   display:grid;grid-template-columns:1fr 1fr;
   align-items:stretch;
   position:relative;
-  box-shadow:inset 0 0 60px rgba(0,0,0,.05);
+  background:#D8D3C4;
+  box-shadow:inset 0 0 40px rgba(0,0,0,.1);
+  padding:16px;
+  gap:16px;
 }
 /* Central fold */
 .album-spread::before{
@@ -183,6 +186,8 @@ body{background:#1a0a2e;font-family:'Barlow',sans-serif;color:white;min-height:1
   background:#FFFFFF;
   padding:24px 24px 40px;
   display:flex;flex-direction:column;
+  border-radius:4px;
+  box-shadow:0 4px 24px rgba(0,0,0,.18),0 1px 4px rgba(0,0,0,.1);
 }
 .panini-page.left{box-shadow:inset -16px 0 24px rgba(0,0,0,.05)}
 .panini-header{
@@ -214,18 +219,18 @@ body{background:#1a0a2e;font-family:'Barlow',sans-serif;color:white;min-height:1
   aspect-ratio:3/4;
   min-height:100px;
   z-index:3;
-  padding:3px;
 }
 
 /* Empty slot styling */
 .panini-slot:not(.earned) .panini-slot-inner{
   background:color-mix(in srgb, var(--slot-color,#E0E0E0) 40%, white);
-  border-radius:8px;
+  border-radius:5px;
   display:flex;flex-direction:column;
-  align-items:center;justify-content:flex-start;
-  padding:8px 6px;
+  align-items:center;justify-content:center;
+  padding:6px 4px;
   position:absolute;inset:0;
   overflow:hidden;
+  border:3px solid rgba(255,255,255,.6);
 }
 
 /* Filled sticker */
@@ -237,6 +242,7 @@ body{background:#1a0a2e;font-family:'Barlow',sans-serif;color:white;min-height:1
   display:flex;flex-direction:column;
   cursor:pointer;
   position:absolute;inset:0;
+  overflow:hidden;
   transition:transform .2s,box-shadow .2s;
 }
 .panini-slot.earned:hover .panini-slot-inner{
@@ -279,7 +285,19 @@ body{background:#1a0a2e;font-family:'Barlow',sans-serif;color:white;min-height:1
 .panini-slot.earned .sc-lbl-wrap-panini{display:none}
 .panini-slot.earned .sc-panini-code-bot{display:none}
 .panini-slot.earned .sc-img-wrap-panini{
-  flex:1;border-radius:3px;
+  flex:1;
+  width:100%;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:0;
+}
+.sc-img-wrap-panini img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
 }
 .panini-slot.earned .sc-slot-inner{border-radius:5px;overflow:hidden}
 .sc-bar-panini .sc-num{font-family:'Bebas Neue',cursive;font-size:11px;color:white;letter-spacing:.5px}
@@ -328,10 +346,10 @@ body{background:#1a0a2e;font-family:'Barlow',sans-serif;color:white;min-height:1
 
 /* Footer nav */
 .album-footer-nav{
-  background:#F5F5F5;border-top:2px solid #E0E0E0;
+  background:#C8C2B0;border-top:2px solid #B8B2A0;
   padding:12px 32px;display:flex;align-items:center;justify-content:space-between;
 }
-.afn-btn{display:flex;align-items:center;gap:8px;background:white;border:1px solid rgba(0,0,0,.15);
+.afn-btn{display:flex;align-items:center;gap:8px;background:#FAFAF7;border:1px solid rgba(0,0,0,.18);
   border-radius:8px;padding:7px 14px;cursor:pointer;font-family:'Barlow Condensed',sans-serif;
   font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#333;
   transition:all .2s;box-shadow:0 2px 6px rgba(0,0,0,.08)}
@@ -417,7 +435,7 @@ body{background:#1a0a2e;font-family:'Barlow',sans-serif;color:white;min-height:1
 .rules-page{
   display:none;
   min-height:calc(100vh - 52px);
-  background:#f8f6f0;
+  background:#C8C2B0;
   animation:pageFlip .35s ease-out;
 }
 .rules-page.active{display:block}
@@ -576,7 +594,7 @@ body{background:#1a0a2e;font-family:'Barlow',sans-serif;color:white;min-height:1
 
 /* Rules footer nav */
 .rules-footer-nav{
-  background:white;border-top:2px solid #ede9df;
+  background:#C8C2B0;border-top:2px solid #B8B2A0;
   padding:14px 48px;display:flex;align-items:center;justify-content:space-between;
 }
 
@@ -982,9 +1000,10 @@ function buildPaniniSlot(t, s, slotColor){
   // Empty slot — Panini style with big watermark number
   return`<div class="panini-slot" id="psc-${t.id}-${s.id}">
     <div class="panini-slot-inner" style="--slot-color:${slotColor};--slot-text:${p.st};
-         background:color-mix(in srgb,${slotColor} 45%,white);border-radius:8px;
+         background:color-mix(in srgb,${slotColor} 45%,white);border-radius:5px;
+         border:3px solid rgba(255,255,255,.6);
          position:absolute;inset:0;overflow:hidden;display:flex;flex-direction:column;
-         align-items:center;justify-content:flex-start;padding:7px 5px;">
+         align-items:center;justify-content:center;padding:4px;">
       <div class="panini-slot-code" style="color:${p.st}">${codeLabel}</div>
       <div class="panini-slot-num-bg" style="color:rgba(255,255,255,.4)">${s.num}</div>
       <div style="position:absolute;bottom:6px;left:0;right:0;text-align:center;
